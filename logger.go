@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 )
@@ -18,68 +19,100 @@ const (
 	LevelDebug
 )
 
-var _log *logger = New()
+var (
+	_fatal   *logger
+	_error   *logger
+	_warning *logger
+	_info    *logger
+	_debug   *logger
+)
+
+func init() {
+	_fatal = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelFatal}
+	_error = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelError}
+	_warning = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelWarning}
+	_info = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelInfo}
+	_debug = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelDebug}
+}
 
 func Fatal(s string) {
-	_log.Output(LevelFatal, s)
+	_fatal.Output(LevelFatal, s)
 	os.Exit(1)
 }
 
 func Fatalf(format string, v ...interface{}) {
-	_log.Output(LevelFatal, fmt.Sprintf(format, v...))
+	_fatal.Output(LevelFatal, fmt.Sprintf(format, v...))
 	os.Exit(1)
 }
 
 func Error(s string) {
-	_log.Output(LevelError, s)
+	_error.Output(LevelError, s)
 }
 
 func Errorf(format string, v ...interface{}) {
-	_log.Output(LevelError, fmt.Sprintf(format, v...))
+	_error.Output(LevelError, fmt.Sprintf(format, v...))
 }
 
 func Warn(s string) {
-	_log.Output(LevelWarning, s)
+	_warning.Output(LevelWarning, s)
 }
 
 func Warnf(format string, v ...interface{}) {
-	_log.Output(LevelWarning, fmt.Sprintf(format, v...))
+	_warning.Output(LevelWarning, fmt.Sprintf(format, v...))
 }
 
 func Info(s string) {
-	_log.Output(LevelInfo, s)
+	_info.Output(LevelInfo, s)
 }
 
 func Infof(format string, v ...interface{}) {
-	_log.Output(LevelInfo, fmt.Sprintf(format, v...))
+	_info.Output(LevelInfo, fmt.Sprintf(format, v...))
 }
 
 func Debug(s string) {
-	_log.Output(LevelDebug, s)
+	_debug.Output(LevelDebug, s)
 }
 
 func Debugf(format string, v ...interface{}) {
-	_log.Output(LevelDebug, fmt.Sprintf(format, v...))
+	_debug.Output(LevelDebug, fmt.Sprintf(format, v...))
 }
 
-func SetLogLevel(level Level) {
-	_log.SetLogLevel(level)
+func SetLogOutput(w io.Writer, level Level) {
+	logger := getLogger(level)
+	logger.SetOutput(w)
+}
+
+func SetLogPrefix(prefix string, level Level) {
+	logger := getLogger(level)
+	logger.SetPrefix(prefix)
+}
+
+func SetLogFlag(flag int, level Level) {
+	logger := getLogger(level)
+	logger.SetFlags(flag)
+}
+
+func getLogger(level Level) *logger {
+	switch level {
+	case LevelFatal:
+		return _fatal
+	case LevelError:
+		return _error
+	case LevelWarning:
+		return _warning
+	case LevelInfo:
+		return _info
+	case LevelDebug:
+		return _fatal
+	}
+
+	return nil
 }
 
 type logger struct {
 	_log *log.Logger
 	//小于等于该级别的level才会被记录
 	logLevel Level
-}
-
-//NewLogger 实例化，供自定义
-func NewLogger() *logger {
-	return &logger{_log: log.New(os.Stderr, "", log.Lshortfile|log.LstdFlags), logLevel: LevelDebug}
-}
-
-//New 实例化，供外部直接调用 log.XXXX
-func New() *logger {
-	return &logger{_log: log.New(os.Stderr, "", log.Lshortfile|log.LstdFlags), logLevel: LevelDebug}
 }
 
 func (l *logger) Output(level Level, s string) error {
@@ -103,48 +136,14 @@ func (l *logger) Output(level Level, s string) error {
 	return l._log.Output(3, s)
 }
 
-func (l *logger) Fatal(s string) {
-	l.Output(LevelFatal, s)
-	os.Exit(1)
+func (l *logger) SetOutput(w io.Writer) {
+	l._log.SetOutput(w)
 }
 
-func (l *logger) Fatalf(format string, v ...interface{}) {
-	l.Output(LevelFatal, fmt.Sprintf(format, v...))
-	os.Exit(1)
+func (l *logger) SetFlags(flag int) {
+	l._log.SetFlags(flag)
 }
 
-func (l *logger) Error(s string) {
-	l.Output(LevelError, s)
-}
-
-func (l *logger) Errorf(format string, v ...interface{}) {
-	l.Output(LevelError, fmt.Sprintf(format, v...))
-}
-
-func (l *logger) Warn(s string) {
-	l.Output(LevelWarning, s)
-}
-
-func (l *logger) Warnf(format string, v ...interface{}) {
-	l.Output(LevelWarning, fmt.Sprintf(format, v...))
-}
-
-func (l *logger) Info(s string) {
-	l.Output(LevelInfo, s)
-}
-
-func (l *logger) Infof(format string, v ...interface{}) {
-	l.Output(LevelInfo, fmt.Sprintf(format, v...))
-}
-
-func (l *logger) Debug(s string) {
-	l.Output(LevelDebug, s)
-}
-
-func (l *logger) Debugf(format string, v ...interface{}) {
-	l.Output(LevelDebug, fmt.Sprintf(format, v...))
-}
-
-func (l *logger) SetLogLevel(level Level) {
-	l.logLevel = level
+func (l *logger) SetPrefix(prefix string) {
+	l._log.SetPrefix(prefix)
 }
