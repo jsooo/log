@@ -3,7 +3,7 @@ golang log库
 
 提供了按照日志等级`info`,`debug`,`error`,`warning`,`fatal`进行隔离的配置
 
-```
+```  golang
 package main
 
 import (
