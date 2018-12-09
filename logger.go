@@ -28,11 +28,11 @@ var (
 )
 
 func init() {
-	_fatal = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelFatal}
-	_error = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelError}
-	_warning = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelWarning}
-	_info = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelInfo}
-	_debug = &logger{_log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelDebug}
+	_fatal = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelFatal}
+	_error = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelError}
+	_warning = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelWarning}
+	_info = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelInfo}
+	_debug = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelDebug}
 }
 
 func Fatal(s string) {
