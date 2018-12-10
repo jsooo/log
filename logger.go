@@ -17,6 +17,7 @@ const (
 	LevelWarning
 	LevelInfo
 	LevelDebug
+	LevelAPI
 )
 
 var (
@@ -25,6 +26,7 @@ var (
 	_warning *logger
 	_info    *logger
 	_debug   *logger
+	_api     *logger
 )
 
 func init() {
@@ -33,6 +35,7 @@ func init() {
 	_warning = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelWarning}
 	_info = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelInfo}
 	_debug = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelDebug}
+	_api = &logger{_log: log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile), logLevel: LevelAPI}
 }
 
 func Fatal(s string) {
@@ -77,6 +80,14 @@ func Debugf(format string, v ...interface{}) {
 	_debug.Output(LevelDebug, fmt.Sprintf(format, v...))
 }
 
+func API(s string) {
+	_debug.Output(LevelAPI, s)
+}
+
+func APIf(format string, v ...interface{}) {
+	_debug.Output(LevelAPI, fmt.Sprintf(format, v...))
+}
+
 func SetLogOutput(w io.Writer, level Level) {
 	logger := getLogger(level)
 	logger.SetOutput(w)
@@ -104,6 +115,8 @@ func getLogger(level Level) *logger {
 		return _info
 	case LevelDebug:
 		return _fatal
+	case LevelAPI:
+		return _api
 	}
 
 	return nil
@@ -131,6 +144,8 @@ func (l *logger) Output(level Level, s string) error {
 		formatStr = "\033[32m[INFO]\033[0m %s"
 	case LevelDebug:
 		formatStr = "\033[36m[DEBUG]\033[0m %s"
+	case LevelAPI:
+		formatStr = "\033[34m[API]\033[0m %s"
 	}
 	s = fmt.Sprintf(formatStr, s)
 	return l._log.Output(3, s)
