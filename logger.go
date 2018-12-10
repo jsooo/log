@@ -81,11 +81,11 @@ func Debugf(format string, v ...interface{}) {
 }
 
 func API(s string) {
-	_debug.Output(LevelAPI, s)
+	_api.Output(LevelAPI, s)
 }
 
 func APIf(format string, v ...interface{}) {
-	_debug.Output(LevelAPI, fmt.Sprintf(format, v...))
+	_api.Output(LevelAPI, fmt.Sprintf(format, v...))
 }
 
 func SetLogOutput(w io.Writer, level Level) {
@@ -114,7 +114,7 @@ func getLogger(level Level) *logger {
 	case LevelInfo:
 		return _info
 	case LevelDebug:
-		return _fatal
+		return _debug
 	case LevelAPI:
 		return _api
 	}
