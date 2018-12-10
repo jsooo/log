@@ -27,27 +27,20 @@ func main() {
 	log.SetLogPrefix("error - ", log.LevelError)
 
 	log.Warn("log - warn")
-	log.Warnf("log - %s", "warn")
+	log.Warnf("log - %s", "warnf")
 	log.Error("log - error")
-	log.Errorf("log - %s", "error")
+	log.Errorf("log - %s", "errorf")
 	log.Info("log - info")
-	log.Infof("log - %s", "info")
+	log.Infof("log - %s", "infof")
 	log.Debug("log - debug")
-	log.Debugf("log - %s", "debug")
+	log.Debugf("log - %s", "debugf")
+	log.API("log - api")
+	log.APIf("log - %s", "apif")
 	log.Fatal("log - fatal")
-	log.Fatalf("log - %s", "fatal")
-
+	log.Fatalf("log - %s", "fatalf")
 }
 
 ```
 
 输出：
-```
-2018/12/05 21:28:05 new-make.go:20: [WARN] log - warn
-2018/12/05 21:28:05 new-make.go:21: [WARN] log - warn
-2018/12/05 21:28:05 new-make.go:24: [INFO] log - info
-2018/12/05 21:28:05 new-make.go:25: [INFO] log - info
-2018/12/05 21:28:05 new-make.go:26: [DEBUG] log - debug
-2018/12/05 21:28:05 new-make.go:27: [DEBUG] log - debug
-2018/12/05 21:28:05 new-make.go:28: [FATAL] log - fatal
-```
+![image](https://github.com/jsooo/log/blob/master/demo/demo.jpg)
